@@ -123,7 +123,7 @@ public class ProcParallelLauncher {
 		JobTask jt = new JobTask(vDataDate,jobType,parallelNum,parallelNum,true);
 		Integer count = new ForkJoinPool().invoke(jt);
 		if(count<parallelNum){
-			System.out.println("ERROR"+"Fail to run the procedure.");
+			System.out.println("ERROR "+"Fail to run the procedure.");
 			correct = false;
 		}else{
 			System.out.println("INFO "+"All jobs have done.");

@@ -6,6 +6,11 @@ import java.util.concurrent.RecursiveTask;
 
 import com.uniplore.tools.ProcLauncher;
 
+/**
+ * 并行任务类
+ * @author tian
+ *
+ */
 public class JobTask extends RecursiveTask<Integer> {
 
 	/**
@@ -44,9 +49,14 @@ public class JobTask extends RecursiveTask<Integer> {
 				subJobTasks.add(new JobTask(vDataDate,this.jobType,i,num,false));
 			}
 		}else{
-			count++;
-			ProcLauncher procLauncher = new ProcLauncher(vDataDate, jobType, index, num);
-			procLauncher.startWork();
+			try{
+				ProcLauncher procLauncher = new ProcLauncher(vDataDate, jobType, index, num);
+				procLauncher.startWork();
+				count++;
+			}catch(Exception e){
+				count=0;
+			}
+			
 		}
 		
 		

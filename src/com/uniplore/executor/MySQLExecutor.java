@@ -5,7 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.uniplore.tools.DataSourceManager;
-
+/**
+ * MySQL SQL执行器，暂时未用到
+ * @author tian
+ *
+ */
 public class MySQLExecutor implements ExecutorInf {
 
 	public MySQLExecutor() {

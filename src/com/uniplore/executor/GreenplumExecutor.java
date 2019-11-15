@@ -2,11 +2,14 @@ package com.uniplore.executor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.uniplore.tools.DataSourceManager;
-
+/**
+ * GP SQL执行器，暂时未用到
+ * @author tian
+ *
+ */
 public class GreenplumExecutor implements ExecutorInf {
 
 	public GreenplumExecutor() {

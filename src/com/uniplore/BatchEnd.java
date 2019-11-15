@@ -9,23 +9,34 @@ import java.util.Date;
 
 import com.uniplore.tools.DataSourceManager;
 
+/**
+ * 跑批结束后的收尾工作
+ * @author tian
+ *
+ */
 public class BatchEnd {
 
 	private String vDataDate;
+	/**
+	 * 
+	 * @param vDataDate 跑批日期
+	 */
 	public BatchEnd(String vDataDate) {
 		this.vDataDate = vDataDate;
 	}
 	
+	/**
+	 * 工作函数
+	 */
 	public void start(){
-		System.out.println("INFO "+"Today batch date is "+vDataDate);
 		updateBatchStatus();
 		prepareNextBatchParam();
 	}
 	
-	public void checkParam(String vDataDate){
-		this.vDataDate=vDataDate;
-	}
-	
+	/**
+	 * 更新当前跑批状态
+	 * @return
+	 */
 	public boolean updateBatchStatus(){
 		Connection conn = null;
 		boolean result = false;
@@ -43,10 +54,11 @@ public class BatchEnd {
 			ps.setString(3, vDataDate);
 			result=ps.execute();
 			ps.close();
+			System.out.println("INFO "+"Success to end batch.");
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("ERROR"+"Can not update END_TIME.");
-			System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
+			System.out.println("ERROR"+" Can not update END_TIME.");
+			System.out.println("DEBUG"+" DATA_DATE is ："+vDataDate);
 		}finally{
 			try {
 				conn.close();
@@ -58,6 +70,10 @@ public class BatchEnd {
 		return result;
 	}
 	
+	/**
+	 * 添加下次跑批日期记录
+	 * @return
+	 */
 	public boolean prepareNextBatchParam(){
 		Connection conn = null;
 		boolean result = false;
@@ -81,10 +97,11 @@ public class BatchEnd {
 			ps.setString(2, nextDate);
 			result=ps.execute();
 			ps.close();
+			System.out.println("INFO "+"Success to initinal next batch "+nextDate+" .");
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("ERROR"+"Can not prepare next batch.");
-			System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
+			System.out.println("ERROR "+"Can not prepare next batch.");
+			System.out.println("DEBUG "+"DATA_DATE is ："+vDataDate);
 		}finally{
 			try {
 				if(conn!=null){

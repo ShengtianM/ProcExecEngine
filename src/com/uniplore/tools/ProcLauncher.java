@@ -37,6 +37,13 @@ public class ProcLauncher {
 		return true;
 	}
 	
+	/**
+	 * 初始化任务开始时间
+	 * @param vDataDate
+	 * @param jobType
+	 * @param jobGroup
+	 * @param procName
+	 */
 	public void start(String vDataDate,String jobType,String jobGroup,String procName){
 		Connection conn = null;
 		try{	
@@ -67,6 +74,13 @@ public class ProcLauncher {
 		}
 	}
 	
+	/**
+	 * 更新任务结束时间
+	 * @param vDataDate
+	 * @param jobType
+	 * @param jobGroup
+	 * @param procName
+	 */
 	public void end(String vDataDate,String jobType,String jobGroup,String procName){
 		Connection conn = null;
 		try{	
@@ -107,7 +121,14 @@ public class ProcLauncher {
 		}
 	}
 	
-	
+	/**
+	 * 修改任务状态
+	 * @param status 需要修改的状态
+	 * @param vDataDate
+	 * @param jobType
+	 * @param jobGroup
+	 * @param procName
+	 */
 	public void changeStatus(String status,String vDataDate,String jobType,String jobGroup,String procName){
 		Connection conn = null;
 		try{	
@@ -126,8 +147,8 @@ public class ProcLauncher {
 			ps.close();
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("ERROR"+"Fail to update the status.");
-			System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
+			System.out.println("ERROR"+" Fail to update the status.");
+			System.out.println("DEBUG"+" DATA_DATE is ："+vDataDate);
 		}finally{
 			try {
 				conn.close();
@@ -138,6 +159,11 @@ public class ProcLauncher {
 		}
 	}
 	
+	/**
+	 * 主要工作函数，按任务组顺序执行
+	 * @param vDataDate
+	 * @param jobType
+	 */
 	public void work(String vDataDate,String jobType){
 		Connection conn = null;
 		try{	
@@ -168,7 +194,6 @@ public class ProcLauncher {
 					case "HIVE":
 						break;
 					case "GP":
-						System.out.println("INFO "+"Success to run procedure :"+proc);
 						changeStatus("RUN", vDataDate, jobType, groupName, proc);
 						ps = conn.prepareStatement("SELECT "+ proc+"(?)");
 						ps.setString(1, vDataDate);
@@ -211,12 +236,11 @@ public class ProcLauncher {
 				}
 				
 				if(!checkGroupStatus(vDataDate, jobType, groupName)){
-					System.out.println("ERROR "+"Group"+
+					System.out.println("ERROR "+"Group："+
 							groupName+" has fail procedures, pls Check table EDW_JOB_STATUS.");
 					break;
 				}else{
-					System.out.println("INFO "+"Group"+
-							groupName+" has done.");
+					System.out.println("INFO "+"Group："+groupName+" has done.");
 				}
 			}
 			ps.close();
@@ -237,6 +261,11 @@ public class ProcLauncher {
 		}
 	}
 	
+	/**
+	 * 根据组名获取任务列表
+	 * @param groupName
+	 * @return
+	 */
 	public List<String> startGroup(String groupName){
 		Connection conn = null;
 		List<String> procList = new ArrayList<String>();
@@ -260,7 +289,6 @@ public class ProcLauncher {
 		}
 		rs1.close();
 		ps1.close();
-		System.out.println("INFO "+"Success to get job list.");
 		}catch(Exception e){
 			e.printStackTrace();
 			System.out.println("ERROR "+"Fail to update the status.");
@@ -277,6 +305,13 @@ public class ProcLauncher {
 		return procList;
 	}
 	
+	/**
+	 * 检查组状态
+	 * @param vDataDate
+	 * @param jobType
+	 * @param jobGroup
+	 * @return
+	 */
 	public boolean checkGroupStatus(String vDataDate,String jobType,String jobGroup){
 		Connection conn = null;
 		boolean doneFlag = false;

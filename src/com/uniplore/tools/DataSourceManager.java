@@ -43,7 +43,7 @@ public class DataSourceManager {
 			dataSource.setUser(configuration.getString("user"));
 			dataSource.setPassword(configuration.getString("pwd"));
 			dataSource.setJdbcUrl(configuration.getString("url"));
-			dataSource.setMinPoolSize(20);
+			dataSource.setMinPoolSize(10);
 			try {
 				dataSource.setDriverClass(configuration.getString("driver"));
 			} catch (PropertyVetoException e) {
