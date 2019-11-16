@@ -5,7 +5,21 @@ package com.uniplore.executor;
  *
  */
 public interface ExecutorInf {
+	/**
+	 * 执行SQL语句
+	 * @param sql
+	 */
 	void runSQL(String sql);
-	void runFile();
+	/**
+	 * 执行SQL文件
+	 * @param path
+	 */
+	void runFile(String path);
 	void exportData();
+	/**
+	 * 执行存储过程
+	 * @param procName
+	 * @param param
+	 */
+	void runProc(String procName,String param);
 }

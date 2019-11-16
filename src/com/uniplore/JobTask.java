@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
+import com.uniplore.executor.GreenplumExecutor;
+import com.uniplore.executor.HiveExecutor;
 import com.uniplore.tools.ProcLauncher;
 
 /**
@@ -50,7 +52,17 @@ public class JobTask extends RecursiveTask<Integer> {
 			}
 		}else{
 			try{
-				ProcLauncher procLauncher = new ProcLauncher(vDataDate, jobType, index, num);
+				ProcLauncher procLauncher =null;
+				switch(jobType){				
+				case "HIVE":
+					procLauncher = 
+						new ProcLauncher(vDataDate, jobType, index, num,new HiveExecutor());
+					break;
+				case "GP":
+					procLauncher = 
+						new ProcLauncher(vDataDate, jobType, index, num,new GreenplumExecutor());					
+					break;
+				}
 				procLauncher.startWork();
 				count++;
 			}catch(Exception e){

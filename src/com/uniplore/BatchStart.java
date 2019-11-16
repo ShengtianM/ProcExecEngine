@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.uniplore.tools.DataSourceManager;
 
@@ -89,9 +91,11 @@ public class BatchStart {
 			conn = DataSourceManager.getConnection();			
 			PreparedStatement ps = 
 					conn.prepareStatement("UPDATE ETL.EDW_BATCH_DATE "
-							+ "SET START_TIME=to_char(NOW(),'yyyy-mm-dd hh:mm:ss') "
+							+ "SET START_TIME=? "
 							+ "WHERE DATA_DATE=?");
-			ps.setString(1, vDataDate);
+			SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );
+			ps.setString(1, sdf.format(new Date()));
+			ps.setString(2, vDataDate);
 			result=ps.execute();
 			ps.close();
 			System.out.println("INFO "+"Success to start batch.");
@@ -160,8 +164,8 @@ public class BatchStart {
 			System.out.println("INFO "+"Success to initinal D job status.");
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("ERROR"+"Fail to initinal D job status.");
-			System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
+			System.out.println("ERROR "+"Fail to initinal D job status.");
+			System.out.println("DEBUG "+"DATA_DATE is ："+vDataDate);
 		}finally{
 			try {
 				conn.close();

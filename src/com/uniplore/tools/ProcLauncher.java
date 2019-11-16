@@ -4,8 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import com.uniplore.executor.ExecutorInf;
+import com.uniplore.executor.GreenplumExecutor;
+import com.uniplore.executor.HiveExecutor;
 
 public class ProcLauncher {
 
@@ -13,6 +19,7 @@ public class ProcLauncher {
 	private String jobType;
 	private int index;
 	private int num;
+	private ExecutorInf execEngine; 
 	
 	/**
 	 * 
@@ -21,11 +28,12 @@ public class ProcLauncher {
 	 * @param index 并行序号
 	 * @param num 并行数量
 	 */
-	public ProcLauncher(String vDataDate,String jobType,int index,int num) {
+	public ProcLauncher(String vDataDate,String jobType,int index,int num,ExecutorInf execEngine) {
 		this.vDataDate = vDataDate;
 		this.jobType = jobType;
 		this.index = index;
 		this.num = num;
+		this.execEngine = execEngine;
 	}
 	
 	public void startWork(){
@@ -50,13 +58,15 @@ public class ProcLauncher {
 			conn = DataSourceManager.getConnection();			
 			PreparedStatement ps = 
 					conn.prepareStatement("UPDATE ETL.EDW_JOB_STATUS "
-							+ "SET START_TIME=to_char(NOW(),'yyyy-mm-dd hh:mm:ss') "
+							+ "SET START_TIME=? "
 							+ "WHERE DATA_DATE=? AND JOB_TYPE=? "
 							+ "AND JOB_GROUP=? AND PROC_NAME=?");
-			ps.setString(1, vDataDate);
-			ps.setString(2, jobType);
-			ps.setString(3, jobGroup);
-			ps.setString(4, procName);
+			SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );
+			ps.setString(1, sdf.format(new Date()));
+			ps.setString(2, vDataDate);
+			ps.setString(3, jobType);
+			ps.setString(4, jobGroup);
+			ps.setString(5, procName);
 			ps.execute();
 			ps.close();
 			System.out.println("INFO "+"Success to update "+procName+" the status.");
@@ -87,17 +97,18 @@ public class ProcLauncher {
 			conn = DataSourceManager.getConnection();			
 			PreparedStatement ps = 
 					conn.prepareStatement("UPDATE ETL.EDW_JOB_STATUS "
-							+ "SET END_TIME=to_char(NOW(),'yyyy-mm-dd hh:mm:ss') "
+							+ "SET END_TIME=? "
 							+ "WHERE DATA_DATE=? AND JOB_TYPE=? "
 							+ "AND JOB_GROUP=? AND PROC_NAME=?");
-			ps.setString(1, vDataDate);
-			ps.setString(2, jobType);
-			ps.setString(3, jobGroup);
-			ps.setString(4, procName);
+			SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );
+			ps.setString(1, sdf.format(new Date()));
+			ps.setString(2, vDataDate);
+			ps.setString(3, jobType);
+			ps.setString(4, jobGroup);
+			ps.setString(5, procName);
 			ps.execute();
 			
-			ps = 
-					conn.prepareStatement("UPDATE ETL.EDW_JOB_STATUS "
+			ps = conn.prepareStatement("UPDATE ETL.EDW_JOB_STATUS "
 							+ "SET RUN_TIME=NULL "
 							+ "WHERE DATA_DATE=? AND JOB_TYPE=? "
 							+ "AND JOB_GROUP=? AND PROC_NAME=?");
@@ -109,8 +120,8 @@ public class ProcLauncher {
 			ps.close();
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("ERROR"+"Fail to update the status.");
-			System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
+			System.out.println("ERROR "+"Fail to update the status.");
+			System.out.println("DEBUG "+"DATA_DATE is ："+vDataDate);
 		}finally{
 			try {
 				conn.close();
@@ -190,25 +201,18 @@ public class ProcLauncher {
 					System.out.println("INFO"+"[----------Start to proc:"
 							+ proc+"-------------]");
 					start(vDataDate, jobType, groupName, proc);
-					switch(jobType){
-					case "HIVE":
-						break;
-					case "GP":
-						changeStatus("RUN", vDataDate, jobType, groupName, proc);
-						ps = conn.prepareStatement("SELECT "+ proc+"(?)");
-						ps.setString(1, vDataDate);
-						try{
-							ps.execute();
-							changeStatus("DONE", vDataDate, jobType, groupName, proc);							
-						}catch(Exception e){
-							changeStatus("FAIL", vDataDate, jobType, groupName, proc);
-							e.printStackTrace();
-							System.out.println("ERROR"+"Fail to run procedure :"+proc);
-							System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
-						}
-						end(vDataDate, jobType, groupName, proc);
-						break;
+					changeStatus("RUN", vDataDate, jobType, groupName, proc);
+					try{
+						execEngine.runProc(proc, vDataDate);
+						changeStatus("DONE", vDataDate, jobType, groupName, proc);							
+					}catch(Exception e){
+						changeStatus("FAIL", vDataDate, jobType, groupName, proc);
+						e.printStackTrace();
+						System.out.println("ERROR "+"Fail to run procedure :"+proc);
+						System.out.println("DEBUG "+"DATA_DATE is :"+vDataDate);
 					}
+					end(vDataDate, jobType, groupName, proc);						
+					
 				}
 				
 				while(true){
@@ -246,8 +250,8 @@ public class ProcLauncher {
 			ps.close();
 		}catch(Exception e){
 			e.printStackTrace();
-			System.out.println("ERROR"+"Fail to update the status.");
-			System.out.println("DEBUG"+"DATA_DATE is ："+vDataDate);
+			System.out.println("ERROR "+"Fail to update the status.");
+			System.out.println("DEBUG "+"DATA_DATE is ："+vDataDate);
 		}finally{
 			try {
 				if(conn!=null){

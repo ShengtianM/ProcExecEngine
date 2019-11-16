@@ -9,7 +9,7 @@ public class MainControl {
 	}
 
 	public static void main(String[] args) {
-		String batchDate = "20170101";
+		String batchDate = "20170102";
 		BatchStart bs = new BatchStart(batchDate);
 		bs.start();
 		

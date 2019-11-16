@@ -17,7 +17,7 @@ public class MySQLExecutor implements ExecutorInf {
 	}
 
 	@Override
-	public void runFile() {
+	public void runFile(String path) {
 		// TODO Auto-generated method stub
 
 	}
@@ -47,6 +47,12 @@ public class MySQLExecutor implements ExecutorInf {
 			}
 			
 		}
+		
+	}
+
+	@Override
+	public void runProc(String procName, String param) {
+		// TODO Auto-generated method stub
 		
 	}
 

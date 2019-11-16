@@ -44,14 +44,16 @@ public class BatchEnd {
 			conn = DataSourceManager.getConnection();			
 			PreparedStatement ps = conn.prepareStatement("UPDATE ETL.EDW_BATCH_DATE SET STATUS='DONE' "
 					+ "WHERE DATA_DATE=? AND STATUS='RUN';"
-					+ "UPDATE ETL.EDW_BATCH_DATE SET END_TIME=to_char(NOW(),'yyyy-mm-dd hh:mm:ss') "
+					+ "UPDATE ETL.EDW_BATCH_DATE SET END_TIME=? "
 					+ "WHERE DATA_DATE=?;"
 					+ "UPDATE ETL.EDW_BATCH_DATE "
 					+ "SET RUN_TIME=NULL "
 					+ "WHERE DATA_DATE=?");
+			SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" );			
 			ps.setString(1, vDataDate);
-			ps.setString(2, vDataDate);
+			ps.setString(2, sdf.format(new Date()));
 			ps.setString(3, vDataDate);
+			ps.setString(4, vDataDate);
 			result=ps.execute();
 			ps.close();
 			System.out.println("INFO "+"Success to end batch.");
@@ -78,7 +80,7 @@ public class BatchEnd {
 		Connection conn = null;
 		boolean result = false;
 		String nextDate = null;
-		SimpleDateFormat sdf =   new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat sdf =  new SimpleDateFormat("yyyyMMdd");
 		try{	
 			Date date= sdf.parse(vDataDate);
 			Calendar c = Calendar.getInstance();  

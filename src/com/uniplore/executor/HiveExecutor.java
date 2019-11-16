@@ -6,22 +6,25 @@ import java.sql.SQLException;
 
 import com.uniplore.tools.DataSourceManager;
 /**
- * GP SQL执行器
+ * GP SQL执行器，暂时未用到
  * @author tian
  *
  */
-public class GreenplumExecutor implements ExecutorInf {
+public class HiveExecutor implements ExecutorInf {
 
-	public GreenplumExecutor() {
+	public HiveExecutor() {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void runFile(String path) {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void exportData() {
+		// TODO Auto-generated method stub
 
 	}
 
