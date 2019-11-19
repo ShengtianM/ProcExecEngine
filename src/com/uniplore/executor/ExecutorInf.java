@@ -14,7 +14,7 @@ public interface ExecutorInf {
 	 * 执行SQL文件
 	 * @param path
 	 */
-	void runFile(String path);
+	void runFile(String path,String param);
 	void exportData();
 	/**
 	 * 执行存储过程

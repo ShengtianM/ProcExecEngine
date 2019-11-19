@@ -17,7 +17,7 @@ public class MySQLExecutor implements ExecutorInf {
 	}
 
 	@Override
-	public void runFile(String path) {
+	public void runFile(String path,String param) {
 		// TODO Auto-generated method stub
 
 	}

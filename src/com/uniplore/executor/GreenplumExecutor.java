@@ -16,7 +16,7 @@ public class GreenplumExecutor implements ExecutorInf {
 	}
 
 	@Override
-	public void runFile(String path) {
+	public void runFile(String path,String param) {
 
 	}
 
